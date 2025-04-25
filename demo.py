@@ -7,9 +7,6 @@ Created on Thu Mar 16 09:33:00 2023
 """
 
 from flask import Flask, render_template, request, redirect, session, jsonify
-# from flask_socketio import SocketIO
-# from routeX import app, socketio, session
-# from sampleintfcs import object_list, client
 
 from flask_session import Session
 
@@ -20,25 +17,16 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'KeB932okfjc'
 Session(app)
 
-S4S4_ADDRESS = 'http://localhost:5010/routing_form'
-#S4S4_ADDRESS = 'http://akvaryum.solusmart.com:5010/routing_form'
-API_CLIENTID = "s4s4demo"
-API_KEY = "s4s4password" 
 
 
-
-# from config import MONGO_CONN_STRING
+from config import MONGO_CONN_STRING, S4S4_ADDRESS, API_CLIENTID, API_KEY, FLASK_PORT
 
 from pymongo import MongoClient
-# client = MongoClient(MONGO_CONN_STRING)
-client = MongoClient()
+client = MongoClient(MONGO_CONN_STRING)
+# client = MongoClient()
 
 
 
-
-# app = Flask(__name__)
-
-# app.register_blueprint(routeX_app)
 
 import re 
 def object_list(inp):
@@ -191,5 +179,4 @@ def routing_proxy():
 
 
 if __name__ == '__main__':
-    app.run(debug = True, host = "0.0.0.0", port=5015)
-    # socketio.run(app, debug = True, host = "0.0.0.0", port=5010)   
+    app.run(debug = True, host = "0.0.0.0", port=FLASK_PORT)
