@@ -1,0 +1,198 @@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#rtgModal").on("shown.bs.modal", function() {
+        socket = io(); // make it global so that can be accessed from showRouting
+        console.log("Socket initiated")
+    
+        socket.on('connect', function() {
+            socket.emit('join', {room: $("input[name='thread_id']").val()});
+            console.log("Joined room: " + $("input[name='thread_id']").val());
+            });
+    
+        socket.on('disconnect', function() {
+            console.log("Disconnect received")
+    
+        });
+
+        socket.on("refresh", function() {
+    /* this part is for routing form; for modal routing code are below commentedarea
+            let addr = "/routing_form?otype=" + $("input[name='otype']").val() + "&oid=" + 
+                        $("input[name='oid']").val() + "&thread_id=" + $("input[name='thread_id']").val();
+            location.href = addr;
+    */
+            console.log("refresh received");
+            showRouting($("input[name='otype']").val(), $("input[name='oid']").val(), $("input[name='thread_id']").val() )
+        });
+ 
+     $("#rtgModal").on("hide.bs.modal", function() {
+          socket.disconnect()   
+     });
+    })
+})
+    
+</script>
+
+<script type="text/javascript">
+ 
+    function showRouting(otype, oid, tid, aud, usr) {
+        if (typeof socket != "undefined") {
+            socket.emit('leave', {room: $("input[name='thread_id']").val()});
+            console.log("Left room: " + $("input[name='thread_id']").val());
+        };
+         $.ajax({   
+//                     beforeSend: function(request) {
+//                                        request.setRequestHeader("Access-Control-Allow-Origin" , "http://localhost:5015");
+//                                      },
+//                     headers:{"Access-Control-Allow-Origin" : "*" },
+//                    url:  "http://localhost:5010/routing_form",
+                    url: "/routing_proxy", // to avoid CORS error
+                    data: {otype:  otype, oid: oid, thread_id: tid, audience: aud, username: usr},
+                    type: "GET",
+                    success: function(data,status) {
+                                console.log(status);
+                                $("#rtgModal").find(".modal-body").html(data);
+                                $("#rtgModal").modal(show=true);
+                                redirectSubmit();
+                                if (typeof socket != "undefined") {
+                                    socket.emit('join', {room: $("input[name='thread_id']").val()});
+                                    console.log("Joined room: " + $("input[name='thread_id']").val());
+                                }
+                            }
+                    });
+
+/*            
+        $.get("http://localhost:5010/routing_form",
+                {otype:  otype, oid: oid, thread_id: tid, audience: aud, username: usr},
+//                {otype:  otype, oid: oid, thread_id: tid, audience: aud},
+                function(data,status) {
+                    console.log(status)
+                    $("#rtgModal").find(".modal-body").html(data);
+                    $("#rtgModal").modal(show=true);
+                    redirectSubmit();
+                    if (typeof socket != "undefined") {
+                        socket.emit('join', {room: $("input[name='thread_id']").val()});
+                        console.log("Joined room: " + $("input[name='thread_id']").val());
+                    }
+//                    initSocket();
+                })
+
+*/
+    }
+
+
+
+    function displaySlcts() {
+        AddRm = "{{ToggleAddRmRcpt}}"
+        Close = "{{CloseAddRm}}"
+        $("#aud-selectors").toggle()
+        if ($("#aud-selectors").css("display") === "none"){
+//            $("#toggle-aud-slct").text("Kişi Ekle/Çıkar")
+            $("#toggle-aud-slct").text(AddRm)
+        }
+        else {
+            $("#toggle-aud-slct").text(Close)
+        }
+    }
+    function displaySlcts_tags() {
+        AddRm = "{{ToggleAddRmTags}}"
+        Close = "{{CloseAddRm}}"
+        $("#tag-selectors").toggle()
+        if ($("#tag-selectors").css("display") === "none"){
+            $("#toggle-tag-slct").text(AddRm)
+        }
+        else {
+            $("#toggle-tag-slct").text(Close)
+        }
+    }
+    function redirectSubmit(){
+        console.log('1');
+        $(document).ready(function() {
+            $('#rtgModal form').on('submit', function(event){ 
+                event.preventDefault();
+                console.log("2");
+                var postData = new FormData($(this)[0]);
+/*                $.post($(this).attr('action'),
+                        $(this).serialize(),
+                        function(data,status) {
+                            $("#rtgModal").find(".modal-body").html(data);
+                            $("#rtgModal").modal(show=true);  
+                            console.log('3');
+                            redirectSubmit()
+                        }
+                ); */
+                $.ajax({
+                        url: $(this).attr('action'),
+                        type: "POST",
+                        data: postData,
+                        processData: false,
+                        contentType: false,
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                    alert('Error ' + textStatus);
+                                    alert(errorThrown);
+                                    alert(XMLHttpRequest.responseText);
+                                },
+                        success: function(data,status) {
+                                                        $("#rtgModal").find(".modal-body").html(data);
+                                                        $("#rtgModal").modal(show=true);  
+                                                        console.log('3');
+                                                        redirectSubmit()
+                                                    }
+
+                         });
+            });
+        })
+   }  
+
+    function filterFunct(divId, inpId) {
+    /* displays the account list on a given div, query performed on data typed on given inp */
+        var fd = new FormData();
+        fd.append("name", $("#" + inpId).val());
+        
+        $.ajax({
+            type: "POST",
+            url: "/obj_list",
+            data: fd,
+            processData: false,
+            contentType: false,
+             success: function(result){
+                 $("#" + divId).html(result)
+                
+            }
+        });
+    };
+    
+    function selectTag() {
+        $("#tagname").val($(event.target).text());
+        $("#tagid").val($(event.target).val());
+        $("#tag-submit").focus()
+            
+    };
+    
+
+</script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="rtgModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header collaborations">
+        <h3 class="modal-title" id="exampleModalLongTitle">{{TopTitle}}</h3> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body container-routing">
+      </div>
+<!--
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+  -->
+    </div>
+  </div>
+</div>

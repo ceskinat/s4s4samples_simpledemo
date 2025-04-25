@@ -1,0 +1,186 @@
+abbr {
+	border-bottom: none;
+	}
+
+
+/* specific divs */
+
+div.collaborations h3 {
+    text-align: center;
+    color: seagreen;
+#    font-size: 56px;
+#    padding: 15;
+    
+}
+    
+
+
+
+div.container-routing {
+/*    width: 90%;*/
+    text-align: left;
+    color: DarkSlateGrey;
+/*    padding: 20px; */
+    border: 1px dotted;
+    border-color: DarkSlateBlue;
+    background-color: white;
+    }
+    
+div.container-routing h4 {
+    color: DarkSlateBlue;
+    text-align: center;
+}
+
+div.container-routing h5, h6 {
+    color: DarkSlateBlue;
+    text-align: left;
+}
+
+div.container-routing li{
+    font-size: small;
+}
+
+div.container-routing .active-thread{
+    font-size: medium;
+}
+
+form.form-inline input, button {
+    margin: 10px;
+    }
+.heading-link {
+    font-size: small;
+    color: SeaGreen;
+    }
+
+.btn-aksiyon, nav-item, nav-link {
+    background-color: white;
+    border: 1px solid;
+    border-color: DarkSlateBlue;
+    color: DarkSlateBlue;
+    }
+
+.btn-aksiyon:hover, nav-item:hover, nav-link:hover {
+    background-color: DarkSlateBlue;
+    color: white;
+    }
+
+.btn-routings {
+#    background-color: DarkSlateBlue;
+    background-color: SeaGreen;
+    color: white;
+    }
+.btn-routings:hover {
+    background-color: white;
+    border: 1px solid;
+#    border-color: DarkSlateBlue;
+    border-color: SeaGreen;
+    }
+
+.akv-link {
+    color: SeaGreen;
+    }
+div.active-thread {
+#    border-style: solid;
+#    border-width: 1px;
+#    border-color: DarkSlateBlue;
+    padding: 5px;
+#    background-color: GhostWhite;
+    background-color: AliceBlue;
+    margin: 20px;
+    margin-left: 2px;
+    }
+    
+.text-sm {
+    font-size: small;
+    
+}
+.bg-msg {
+    background-color: White;
+    }
+.rtg-link {
+    text-decoration: none;
+    color: black;
+    }
+.rtg-list-item {
+    border: 1px groove;
+}
+
+.rtg-list-title {
+    color: SeaGreen;
+    font-size: small;
+}
+
+div.aud-selector {
+#    background-color: white;
+    padding: 10;
+    border: 1px groove;
+    border-color: White;
+}
+
+div.messages-area {
+#    background-color: AliceBlue;
+    padding: 10;
+    border: 1px groove;
+    border-color: White;
+}
+
+p.obj-list-item {
+    margin: 5px;
+}
+
+p.obj-list-item:hover {
+    background-color: lightgray;
+}
+
+div.obj-list_ {
+    height: 100px;
+    overflow: scroll;
+    border: 1px solid;
+    padding: 5px;
+}
+
+#slct-obj {
+    width: 90%;
+}
+
+
+.summary-title {
+    color: DarkSlateBlue;
+    font-weight: bold;
+}
+
+div.section-acc {
+    height: 250px;
+    overflow: scroll;
+    font-size: small;
+}
+
+div.tags-list {
+    background-color: GhostWhite;
+    font-size: small;
+}
+
+div.exc-display {
+    color: Red;
+    text-align: center;
+    border: 2px solid;
+}
+
+
+div.attachment-display a{
+#    width:auto;
+    float: right;
+#    margin-left: auto;
+#    display: flex;
+#   justify-content: flex-end;
+    background-color: GhostWhite;
+}
+
+div.attach-file {
+    background-color: GhostWhite;
+    width: 50%;
+    text-align: right;
+#    margin-left: auto;
+#    margin-right: 0;
+}
+

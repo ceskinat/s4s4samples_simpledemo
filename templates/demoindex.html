@@ -1,0 +1,202 @@
+{% block styles %}
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+{% endblock %}
+
+{% include "rtgmodal.html" %}
+
+<style>
+div.user-login {
+    text-align: right;
+}
+div.object-title {
+    background-color: darkslategrey;
+    color: whitesmoke;
+    text-align: center;
+    text-size: 2em;
+}
+a {
+    color: darkslategrey;
+}
+h2 span:hover {
+    color: darkgreen;
+    cursor: help;
+}
+.rx-info {
+    background: linear-gradient(to right, SeaGreen, DarkSlateBlue);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+<!-- login modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header collaborations">
+        <h3 class="modal-title" id="exampleModalLongTitle">Please Log in</h3> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form class="form" action="/login" method="POST">
+             <table class="table table-borderless">
+                 <tr><td>Username</td><td>:</td><td><input class="form-control" type="text" pattern="[A-Za-z0-9]{3,}" name="username" required placeholder="Min. 3 Alphanumeric"></td></tr>
+                 <tr><td>Email (optional)</td><td>:</td><td><input class="form-control" type="email" name="email"></td></tr>                     
+             </table>
+             <button class="form-control btn btn-aksiyon">Login / Register</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- add object modal -->
+<div class="modal fade" id="objectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header collaborations">
+        <h3 class="modal-title" id="exampleModalLongTitle">Create New Object</h3> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form class="form" action="/add_object" method="POST">
+             <table class="table table-borderless">
+                 <tr><td>Select from existing Object Types</td><td>:</td><td><select name="slct-type">
+                     {% for type in otypes %}
+                         <option value="{{type}}">{{type}}</option>
+                     {% endfor %}
+                 <tr><td>or Create New Type</td><td>:</td><td><input class="form-control" type="text" pattern="[A-Za-z0-9]{3,}" name="newtype"  placeholder="Min. 3 Alphabetic"></td></tr>
+                 <tr><td>Object Name</td><td>:</td><td><input class="form-control" type="text" name="newname" required></td></tr>                     
+             </table>
+             <button class="form-control btn btn-aksiyon">Add Object</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- about modal -->
+<div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" >
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header collaborations">
+        <h3 class="modal-title" id="exampleModalLongTitle">About sharesfor</h3> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="aboutModalBody">
+          <script>
+           $(function(){
+              $("#aboutModalBody").load("{{url_for('static', filename='abouts4s4.html')}}"); 
+            });
+          </script> 
+            
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Attach the event listener to all forms in the document
+    $('form').submit(function(event) {
+        event.preventDefault();  // Prevent the form from submitting immediately
+
+        var form = $(this);  // Reference to the current form being submitted
+
+        // Fetch the authorization code from the server
+        $.get('/get-auth-code', function(response) {
+//            var apiKey = response.api_key;  // Assume the server responds with {api_key: "your-api-key"}
+            var apiKey = response.api_key;
+            var clientId = response.client_id;
+            // Assume the server responds with {api_key: "your-api-key"}
+
+            // Populate the hidden field with the retrieved API key for this specific form
+            form.find('#api_key').val(apiKey);
+            form.find('#client_id').val(clientId);
+
+            // Submit the form after the API key is set
+             form[0].submit();
+            setTimeout(function() {
+                                                form.find('#api_key').val('');
+                                                form.find('#client_id').val('');
+
+                                    }, 1000   )
+
+            // Clear the hidden field after form submission
+        }).fail(function() {
+            alert('Failed to retrieve the authorization code.');
+        });
+    });
+});
+</script>
+
+
+
+
+<div class="container">
+    <div class="header text-center">
+        <h2 style="color:SeaGreen;"><span class="rx-info" onclick="$('#aboutModal').modal(show=true)" >sharesfor</span> Demo </h2>
+    </div>
+    <div class="user-login p-3">
+    {% if session.get("user") %}
+        User:<a class="dropdown-toggle" data-toggle="dropdown">{{session.user.username}}</a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+        </ul>
+    {% else %}
+        <script type="text/javascript">
+            $("#loginModal").modal(show=true);
+        </script>
+    {% endif %}
+    </div>
+  {% if session.get("user") %}  
+  <div class="main row">
+      {% for type in otypes %}
+        <div class="col-lg-4 object-type mt-2">  
+            <div class="object-title">{{type}}s</div>     
+              <ul class="list-group">
+              {% for object in objs %}
+                  {% if object.otype == type %}
+                     <li class="list-group-item"> 
+<!--
+
+                     <a href='#' onclick="showRouting('{{object['otype']}}', '{{object['oid']}}', '0', '[{{session.user.username}}]', '{{session.user.username}}')">{{object["oname"]}}</a>
+
+                     <a href="/routing_form?otype={{object['otype']}}&oid={{object['oid']}}&username={{session.user.username}}{% if session.user.email %} &email={{session.user.email}} {% endif %}"
+                    target="_blank">{{object["oname"]}}</a>
+-->                     
+                        <form action="{{s4s4address}}" method="POST" target="_blank">
+                            <input type="hidden" name="otype" value={{object['otype']}}>
+                            <input type="hidden" name="oid" value={{object['oid']}}>
+                            <input type="hidden" name="userid" value={{session.user.userid}}>   
+                            <input type="hidden" name="username" value={{session.user.username}}>   
+
+                            <input type="hidden" name="client_id" id="client_id">   
+                            <input type="hidden" name="api_key" id="api_key">   
+
+                            {% if session.user.email %} 
+                                <input type="hidden" name="email" value={{session.user.email}}>   
+                            {% endif %} 
+                            <button class="btn" type="submit">   {{object["oname"]}} </button>                  
+                        </form>     
+                    </li>
+                  {% endif %}
+              {% endfor %} 
+              </ul>   
+        </div>  
+      {% endfor %}
+  </div>
+  {% endif %}
+  <div>
+      <a href="#" onclick="$('#objectModal').modal(show=true)">Add Object</a>
+  </div>
+</div>
