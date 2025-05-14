@@ -161,7 +161,7 @@ def all_users():
     # returns in the form of {"id": id, "name": username}
     db = client.routeX_demo
     
-    return [{"id": str(x["_id"]), "name": x["username"], "email": x.get("email", "") } for x in db.users.find()]
+    return [{"id": str(x["_id"]), "name": x["username"], "email": x.get("email", ""), "admin": x.get("admin") } for x in db.users.find()]
 
 
 @app.route('/routing_proxy', methods=['GET'])
