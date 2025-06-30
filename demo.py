@@ -31,7 +31,7 @@ client = MongoClient(MONGO_CONN_STRING)
 import re 
 def object_list(inp):
     # returns a sample list of objects
-    db = client.routeX_demo
+    db = client.s4s4_demo
     lst = list(db.objects.find({"oname": re.compile(inp, re.I)}))
 
     return lst
@@ -45,7 +45,7 @@ def object_name(otype, oid):
 
 
 def all_users():
-    db = client.routeX_demo
+    db = client.s4s4_demo
     return list(db.users.find())
 
 
@@ -59,7 +59,7 @@ def index():
 @app.route('/add_object', methods=['POST'])
 def add_object():
     from random import randint
-    db = client.routeX_demo
+    db = client.s4s4_demo
     if request.form.get("newtype"):
         otype = request.form["newtype"]
     else:
@@ -80,7 +80,7 @@ def add_object():
 
 @app.route('/login', methods=["POST"])
 def login():
-    db = client.routeX_demo
+    db = client.s4s4_demo
     usr = db.users.find_one({"username": request.form["username"]})
     if not usr:
         db.users.insert_one({"username": request.form["username"], "email": request.form.get("email")})
@@ -126,7 +126,7 @@ def routing_form():
 def obj_list():
     # returns a sample list of objects
     inp = request.form.get("inp", "")
-    db = client.routeX_demo
+    db = client.s4s4_demo
 #    lst = list(db.objects.find({"oname": re.compile(inp, re.I)}))
     lst = []
     for obj in db.objects.find({"oname": re.compile(inp, re.I)}):
@@ -141,7 +141,7 @@ def obj_name():
     otype = request.form["otype"]
     oid = int(request.form["oid"])
 
-    db = client.routeX_demo
+    db = client.s4s4_demo
     obj = db.objects.find_one({"otype": otype,
                                "oid": oid  })
     if obj:
@@ -159,7 +159,7 @@ def obj_name():
 @app.route('/interfaces/authorized_users', methods=['POST'])
 def all_users():
     # returns in the form of {"id": id, "name": username}
-    db = client.routeX_demo
+    db = client.s4s4_demo
     
     return [{"id": str(x["_id"]), "name": x["username"], "email": x.get("email", ""), "admin": x.get("admin") } for x in db.users.find()]
 
